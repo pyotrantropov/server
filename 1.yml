@@ -23,7 +23,7 @@ services:
       - ./etc-pihole:/etc/pihole:rw
       - ./etc-dnsmasq.d:/etc/dnsmasq.d/:rw
     networks:
-      home:
+      macvlan:
         ipv4_address: 192.168.2.5
     restart: always
 
@@ -36,12 +36,12 @@ services:
       - 53/tcp
       - 53/udp
     networks:
-      home:
+      macvlan:
         ipv4_address: 192.168.2.6
     restart: always
 
 networks:
-  home:
+  macvlan:
     driver: macvlan
     driver_opts:
       parent: ${NETWORK_INTERFACE}
