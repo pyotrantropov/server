@@ -20,15 +20,16 @@ services:
       - WEBPASSWORD=${WEBPASSWORD}
       - PIHOLE_DNS_=192.168.1.6;192.168.1.13
     volumes:
-      - /volume1/docker/pihole-unbound/pihole/volume:/etc/pihole:rw
-      - /volume1/docker/pihole-unbound/pihole/config/hosts:/etc/hosts:ro
-      - /volume1/docker/pihole-unbound/pihole/config/resolv.conf:/etc/resolv.conf:ro
-      - /volume1/docker/pihole-unbound/pihole/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
-      - /volume1/docker/pihole-unbound/pihole/config/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf:ro
+      - ./pihole/volume:/etc/pihole:rw
+      - ./pihole/config/hosts:/etc/hosts:ro
+      - ./pihole/config/resolv.conf:/etc/resolv.conf:ro
+      - ./pihole/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
+      - ./pihole/config/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf:ro
     networks:
       home:
         ipv4_address: 192.168.1.5
     restart: always
+
   unbound:
     container_name: unbound
     image: mvance/unbound:latest
@@ -46,7 +47,7 @@ networks:
   home:
     driver: macvlan
     driver_opts:
-      parent: ovs_eth1
+      parent: ${NETWORK_INTERFACE}
     ipam:
       config:
         - subnet: 192.168.1.0/24
