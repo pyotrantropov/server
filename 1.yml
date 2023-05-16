@@ -20,11 +20,8 @@ services:
       - WEBPASSWORD=${WEBPASSWORD}
       - PIHOLE_DNS_=192.168.1.6;192.168.1.13
     volumes:
-      - ./pihole/volume:/etc/pihole:rw
-      - ./pihole/config/hosts:/etc/hosts:ro
-      - ./pihole/config/resolv.conf:/etc/resolv.conf:ro
-      - ./pihole/config/dnsmasq.conf:/etc/dnsmasq.d/02-network.conf:ro
-      - ./pihole/config/pihole-FTL.conf:/etc/pihole/pihole-FTL.conf:ro
+      - ./etc-pihole:/etc/pihole:rw
+      - ./etc-dnsmasq.d:/etc/dnsmasq.d/:rw
     networks:
       home:
         ipv4_address: 192.168.1.5
