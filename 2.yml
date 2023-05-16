@@ -7,10 +7,12 @@ services:
 #     cap_add: # Uncomment if you want to use Pi-Hole for DHCP
 #       - NET_ADMIN
     ports:
-      - 53/tcp
-      - 53/udp
+      - 53:53/tcp
+      - 53:53/udp
+      
 #       - 67/udp # Uncomment if you want to use Pi-Hole for DHCP
-      - 80/tcp
+      - 80:80/tcp
+      - "443:443/tcp"
     environment:
       - FTLCONF_LOCAL_IPV4=${PIHOLE_MACVLAN_IP}
       - WEBPASSWORD=${WEBPASSWORD}
