@@ -1,0 +1,92 @@
+#Sample docker-compose.yaml deploying Pi-hole and Unbound 
+#with a Bridged Network.
+#This example needs to be modified to reflect your network environment,
+#especially the values in angle brackets (<>) must be adapted to your needs.
+#This file is the one I'm using and was slightly modified with added IPv6
+#support (which I'm not using currently).
+
+version: '2'
+
+services:
+  pihole:
+    container_name: pi-hole
+    image: pihole/pihole:latest
+    hostname: pi-hole
+    domainname: <yourdomain.lan>
+    depends_on:
+      - unbound
+    cap_add:
+      - NET_ADMIN
+      - NET_BIND_SERVICE
+    networks:
+      dns-network:
+        ipv4_address: 172.20.0.6 #e.g. 172.20.0.254
+        #ipv6_address: <PI_HOLE_IPv6_ADDRESS> #e.g. fd11:aa:1234:1234::506
+    dns:
+      - 172.20.0.7 #e.g. 172.20.0.253 or fd11:aa:1234:1234::505
+    ports:
+      - 53:53/tcp
+      - 53:53/udp
+      - 67:67/udp
+      - 80:80/tcp
+      - 443:443/tcp
+    environment:
+      ServerIP: 172.20.0.6 #e.g 172.20.0.254 or fd11:aa:1234:1234::506
+      VIRTUAL_HOST: pi-hole.yourdomain.lan
+      WEBPASSWORD: $WEBPASSWORD
+      TZ: $TIMEZONE #e.g. "America/New_York"
+      CORS_HOSTS: <yourdomain.lan>
+      PIHOLE_DNS_: 172.20.0.7#5335 #e.g. 192.168.1.253#5335 or fd11:aa:1234:1234::505#5335
+      IPv6: <"false"> #Enable if using IPv6, uncomment and set IPv6-adresses for pi-hole and unbound, uncomment and edit the "networks" section below accordingly  
+      DNS_BOGUS_PRIV: <"true"> #Enable forwarding of reverse lookups for private ranges
+      DNS_FQDN_REQUIRED: <"true"> #Never forward non-FQDNs
+      REV_SERVER: <"true"> #Use Conditional Forwarding
+      REV_SERVER_TARGET: 192.168.1.1 #e.g. 192.168.1.1 or fd11:aa:1234:1234::11
+      REV_SERVER_DOMAIN: <yourdomain.lan>
+      REV_SERVER_CIDR: 192.168.1.0/24 #e.g. 192.168.1.0/24 or fd11:aa:1234:1234::/64
+    volumes:
+      - ./pihole/:/etc/:rw #Your local path to Pi-hole
+    restart: unless-stopped
+     
+  unbound:
+    container_name: unbound
+    image: madnuttah/unbound:latest
+    hostname: unbound
+    domainname: <yourdomain.lan>
+    ports:
+      - 5335:5335/tcp
+      - 5335:5335/udp
+    networks:
+      dns-network:
+        ipv4_address: 172.20.0.7 #e.g. 172.20.0.253
+        #ipv6_address: <UNBOUND_IPv6_ADDRESS> #e.g. fd11:aa:1234:1234::505
+    environment: 
+      TZ: ${TIMEZONE} #e.g. "America/New_York"
+      ServerIP: 172.20.0.7 #e.g. 172.20.0.253 or fd11:aa:1234:1234::505
+      VIRTUAL_HOST: <unbound.yourdomain.lan>
+    volumes:       
+      - ./unbound/unbound.conf:/usr/local/unbound/unbound.conf:rw #Your local path to Unbound
+      - ./unbound/conf.d/:/usr/local/unbound/conf.d/:rw
+      - ./unbound/iana.d/:/usr/local/unbound/iana.d/:rw
+      - ./unbound/log.d/unbound.log:/usr/local/unbound/log.d/unbound.log:rw
+      - ./unbound/zones.d/:/usr/local/unbound/zones.d/:rw
+    restart: unless-stopped
+    healthcheck:
+      test: /usr/local/sbin/healthcheck.sh
+      interval: 60s
+      retries: 5
+      start_period: 15s
+      timeout: 30s
+    
+networks:
+  dns-network:
+    #enable_ipv6: <false> #Enable if using IPv6
+    driver: bridge
+    driver_opts:
+      parent: eno1 #Your parent network interface
+    ipam:
+      config:
+        - subnet: 172.20.0.0 #e.g. 172.20.0.0/24     
+          gateway: 172.20.0.1 #e.g. 172.20.0.1  
+        #- subnet: <IPv6_SUBNET> #e.g. fd11:aa:1234:1234::/126
+        # gateway: <GATEWAY_IPv6_ADDRESS> #e.g. fd11:aa:1234:1234::11   
