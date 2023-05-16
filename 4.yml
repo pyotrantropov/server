@@ -7,12 +7,10 @@ services:
 #     cap_add: # Uncomment if you want to use Pi-Hole for DHCP
 #       - NET_ADMIN
     ports:
-      - 53:53/tcp
-      - 53:53/udp
-      
+      - 53/tcp
+      - 53/udp
 #       - 67/udp # Uncomment if you want to use Pi-Hole for DHCP
-      - 80:80/tcp
-      - "443:443/tcp"
+      - 80/tcp
     environment:
       - FTLCONF_LOCAL_IPV4=${PIHOLE_MACVLAN_IP}
       - WEBPASSWORD=${WEBPASSWORD}
@@ -21,15 +19,15 @@ services:
       - DNSMASQ_USER=root
       - DNSMASQ_LISTENING=local
     volumes:
-      - ./etc-pihole:/etc/pihole:rw
-      - ./etc-dnsmasq.d:/etc/dnsmasq.d/:rw
+      - /volume1/docker/synology-docker-pihole-unbound/pihole/pihole:/etc/pihole:rw
+      - /volume1/docker/synology-docker-pihole-unbound/pihole/dnsmasq.d:/etc/dnsmasq.d/:rw
     networks:
       macvlan:
         ipv4_address: ${PIHOLE_MACVLAN_IP}
       bridge:
         ipv4_address: ${PIHOLE_BRIDGE_IP}
     restart: always
-  
+    
   unbound:
     container_name: unbound
     image: mvance/unbound:latest
@@ -51,7 +49,6 @@ networks:
         - subnet: ${MACVLAN_SUBNET}
           gateway: ${MACVLAN_GATEWAY}
           ip_range: ${MACVLAN_IP_RANGE}
-          
   bridge:
     driver: bridge
     ipam:
