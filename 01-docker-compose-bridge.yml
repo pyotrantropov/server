@@ -48,8 +48,8 @@ unbound:
         ipv4_address: 172.20.0.7 #e.g. 172.20.0.253
         #ipv6_address: <UNBOUND_IPv6_ADDRESS> #e.g. fd11:aa:1234:1234::505
     environment: 
-      - TZ=${TIMEZONE} #e.g. "America/New_York"
-      - ServerIP= 172.20.0.7 #e.g. 172.20.0.253 or fd11:aa:1234:1234::505
+      TZ: "Europe/Madrid" #e.g. "America/New_York"
+      ServerIP: 172.20.0.7 #e.g. 172.20.0.253 or fd11:aa:1234:1234::505
       #VIRTUAL_HOST: <unbound.yourdomain.lan>
     volumes:       
       - ./unbound/unbound.conf:/usr/local/unbound/unbound.conf:rw #Your local path to Unbound
