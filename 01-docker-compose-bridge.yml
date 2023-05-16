@@ -86,7 +86,7 @@ networks:
       parent: eno1 #Your parent network interface
     ipam:
       config:
-        - subnet: 172.20.0.0 #e.g. 172.20.0.0/24     
+        - subnet: 172.20.0.0/24   #e.g. 172.20.0.0/24     
           gateway: 172.20.0.1 #e.g. 172.20.0.1  
         #- subnet: <IPv6_SUBNET> #e.g. fd11:aa:1234:1234::/126
         # gateway: <GATEWAY_IPv6_ADDRESS> #e.g. fd11:aa:1234:1234::11   
