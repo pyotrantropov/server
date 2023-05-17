@@ -12,25 +12,24 @@ services:
     container_name: pi-hole
     image: pihole/pihole:latest
     hostname: pi-hole
-    domainname: <yourdomain.lan>
     depends_on:
       - unbound
     cap_add:
       - NET_ADMIN
-      - NET_BIND_SERVICE
+      #- NET_BIND_SERVICE
     networks:
       dns_net:
         ipv4_address: 172.20.0.6
     ports:
       - "53:53/tcp"
       - "53:53/udp"
+      #- "67:67/udp" # Only required if you are using Pi-hole as your DHCP server
       - "80:80/tcp"
       - "443:443/tcp"
     environment:
-      - TZ=${TIMEZONE}
-      - WEBPASSWORD=$WEBPASSWORD
-      - PIHOLE_DNS_=172.20.0.7#5335
-      - CUSTOM_CACHE_SIZE=0
+      TZ: 'Europe/Madrid'
+      WEBPASSWORD: 'pihole'
+      PIHOLE_DNS_: "172.20.0.7#5335"
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
