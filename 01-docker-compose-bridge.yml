@@ -19,7 +19,7 @@ services:
       #- NET_BIND_SERVICE
     networks:
       dns_net:
-        ipv4_address: 172.20.0.6
+        ipv4_address: 172.20.0.2
     ports:
       - "53:53/tcp"
       - "53:53/udp"
@@ -29,8 +29,11 @@ services:
     environment:
       TZ: 'Europe/Madrid'
       WEBPASSWORD: 'pihole'
-      PIHOLE_DNS_: "172.20.0.7#5335"
-      CACHE_SIZE: "150"
+      PIHOLE_DNS_: 
+        - "172.20.0.3#5335"
+        - "8.8.8.8"
+        - "1.1.1.1"
+      CACHE_SIZE: "1500"
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
@@ -46,10 +49,10 @@ services:
       - 5335:5335/udp
     networks:
       dns_net:
-        ipv4_address: 172.20.0.7
+        ipv4_address: 172.20.0.3
     environment: 
       TZ: "Europe/Madrid" #e.g. "America/New_York"
-      ServerIP: 172.20.0.7 #e.g. 172.20.0.7 or fd11:aa:1234:1234::505
+      ServerIP: 172.20.0.3 #e.g. 172.20.0.7 or fd11:aa:1234:1234::505
       VIRTUAL_HOST: <unbound.yourdomain.lan>
     volumes:       
       - ./unbound/unbound.conf:/usr/local/unbound/unbound.conf:rw #Your local path to Unbound
