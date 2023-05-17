@@ -29,10 +29,7 @@ services:
     environment:
       TZ: 'Europe/Madrid'
       WEBPASSWORD: 'pihole'
-      PIHOLE_DNS_: 
-        - "172.20.0.3#5335"
-        - "8.8.8.8"
-        - "1.1.1.1"
+      PIHOLE_DNS_: "172.20.0.3#5335"
       CACHE_SIZE: "1500"
     volumes:
       - './etc-pihole/:/etc/pihole/'
